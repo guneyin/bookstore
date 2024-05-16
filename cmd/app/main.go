@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/guneyin/bookstore/api"
 	"github.com/guneyin/bookstore/api/middleware"
@@ -41,7 +42,10 @@ func NewApplication(name string) (*Application, error) {
 			return middleware.Error(ctx, err)
 		},
 	})
+
 	httpServer.Use(recover.New())
+	httpServer.Use(favicon.New())
+
 	apiGroup := httpServer.Group("/api")
 
 	return &Application{
@@ -54,6 +58,8 @@ func NewApplication(name string) (*Application, error) {
 }
 
 func (app *Application) Run() error {
+	common.SetLastRun(time.Now())
+
 	return app.HttpServer.Listen(fmt.Sprintf(":%d", app.Config.Port))
 }
 
@@ -62,8 +68,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	common.SetLastRun(time.Now())
 
 	log.Fatal(app.Run())
 }

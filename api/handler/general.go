@@ -27,8 +27,8 @@ func (gh *GeneralHandler) Name() string {
 }
 
 func (gh *GeneralHandler) SetRoutes(r fiber.Router) IHandler {
-	g := r.Group("/general")
-	g.Get("/status", gh.GeneralStatus)
+	g := r.Group(gh.Name())
+	g.Get("status", gh.GeneralStatus)
 
 	return gh
 }
