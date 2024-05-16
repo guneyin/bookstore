@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/guneyin/bookstore/api"
+	"github.com/guneyin/bookstore/api/middleware"
 	"github.com/guneyin/bookstore/common"
 	"github.com/guneyin/bookstore/config"
 	"log"
@@ -36,6 +37,9 @@ func NewApplication(name string) (*Application, error) {
 		EnablePrintRoutes: true,
 		ReadTimeout:       defaultReadTimeout,
 		WriteTimeout:      defaultWriteTimeout,
+		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
+			return middleware.Error(ctx, err)
+		},
 	})
 	httpServer.Use(recover.New())
 	apiGroup := httpServer.Group("/api")

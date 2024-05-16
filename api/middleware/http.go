@@ -1,13 +1,17 @@
 package middleware
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"errors"
+	"github.com/gofiber/fiber/v2"
+	"github.com/guneyin/bookstore/common"
+)
 
 type status string
 
 const (
 	statusSuccess  status = "SUCCESS"
 	statusError    status = "ERROR"
-	statusNotfound status = "NOT-FOUND"
+	statusNotfound status = "NOT_FOUND"
 )
 
 type response struct {
@@ -25,16 +29,16 @@ func OK(c *fiber.Ctx, msg string, data any) error {
 }
 
 func Error(c *fiber.Ctx, err error) error {
-	return c.Status(fiber.StatusInternalServerError).JSON(response{
-		Status:  string(statusSuccess),
-		Message: err.Error(),
-		Data:    nil,
-	})
-}
+	statusCode := fiber.StatusInternalServerError
+	statusMsg := statusError
 
-func NotFound(c *fiber.Ctx, err error) error {
-	return c.Status(fiber.StatusNotFound).JSON(response{
-		Status:  string(statusSuccess),
+	if errors.Is(err, common.ErrNotFound) {
+		statusCode = fiber.StatusNotFound
+		statusMsg = statusNotfound
+	}
+
+	return c.Status(statusCode).JSON(response{
+		Status:  string(statusMsg),
 		Message: err.Error(),
 		Data:    nil,
 	})
