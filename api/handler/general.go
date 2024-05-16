@@ -8,16 +8,22 @@ import (
 	"github.com/guneyin/bookstore/service/general"
 )
 
+const generalHandlerName = "general"
+
 type GeneralHandler struct {
 	svc *general.Service
 }
 
 var _ IHandler = (*GeneralHandler)(nil)
 
-func NewGeneral(cfg *config.Config) *GeneralHandler {
+func NewGeneral(cfg *config.Config) IHandler {
 	svc := general.New(cfg)
 
 	return &GeneralHandler{svc}
+}
+
+func (gh *GeneralHandler) Name() string {
+	return generalHandlerName
 }
 
 func (gh *GeneralHandler) SetRoutes(r fiber.Router) IHandler {

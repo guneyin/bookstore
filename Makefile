@@ -11,6 +11,9 @@ LDFLAG_VERSION='${PACKAGE}/common.Version=${VERSION}'
 LDFLAG_COMMIT_HASH='${PACKAGE}/common.CommitHash=${COMMIT_HASH}'
 LDFLAG_BUILD_TIMESTAMP='${PACKAGE}/common.BuildTime=${BUILD_TIMESTAMP}'
 
+vet:
+	go vet ./...
+
 build:
 	go build -o ${BINARY_NAME} -ldflags "-X ${LDFLAG_VERSION} -X ${LDFLAG_COMMIT_HASH} -X ${LDFLAG_BUILD_TIMESTAMP}"  cmd/app/main.go
 
