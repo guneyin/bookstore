@@ -1,5 +1,7 @@
 package general
 
+import "github.com/guneyin/bookstore/common"
+
 type (
 	ServiceStatus string
 	Env           string
@@ -15,7 +17,7 @@ const (
 
 type Status struct {
 	Status  ServiceStatus
-	Version string
+	Version *common.VersionInfo
 	Env     Env
 	Uptime  string
 }

@@ -1,14 +1,29 @@
 package common
 
-import "time"
-
-var (
-	gitCommit string
-	lastRun   time.Time
+import (
+	"time"
 )
 
-func GetVersion() string {
-	return gitCommit
+type VersionInfo struct {
+	Version    string
+	CommitHash string
+	BuildTime  string
+}
+
+var (
+	Version    string
+	CommitHash string
+	BuildTime  string
+
+	lastRun time.Time
+)
+
+func GetVersion() *VersionInfo {
+	return &VersionInfo{
+		Version:    Version,
+		CommitHash: CommitHash,
+		BuildTime:  BuildTime,
+	}
 }
 
 func SetLastRun(t time.Time) {

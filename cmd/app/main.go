@@ -42,7 +42,7 @@ func NewApplication(name string) (*Application, error) {
 
 	return &Application{
 		Name:       name,
-		Version:    common.GetVersion(),
+		Version:    common.GetVersion().Version,
 		Config:     cfg,
 		HttpServer: httpServer,
 		Api:        api.New(cfg, apiGroup),
