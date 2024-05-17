@@ -13,11 +13,14 @@ type StatusResponse struct {
 	Uptime string `json:"uptime"`
 }
 
-func (sr *StatusResponse) FromEntity(e general.Status) {
+func StatusFromEntity(e general.Status) *StatusResponse {
+	sr := &StatusResponse{}
 	sr.Status = string(e.Status)
 	sr.VersionInfo.Version = e.Version.Version
 	sr.VersionInfo.CommitHash = e.Version.CommitHash
 	sr.VersionInfo.BuildTime = e.Version.BuildTime
 	sr.Env = string(e.Env)
 	sr.Uptime = e.Uptime
+
+	return sr
 }

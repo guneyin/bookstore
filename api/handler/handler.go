@@ -29,6 +29,7 @@ func New(cfg *config.Config, router fiber.Router) *Handler {
 
 func (h *Handler) registerHandlers() {
 	h.registerHandler(NewGeneral)
+	h.registerHandler(NewUser)
 }
 
 func (h *Handler) registerHandler(f func(cfg *config.Config) IHandler) {

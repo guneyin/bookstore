@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	defaultReadTimeout  = 5 * time.Second
-	defaultWriteTimeout = 5 * time.Second
+	defaultReadTimeout  = 30 * time.Second
+	defaultWriteTimeout = 30 * time.Second
 )
 
 type Application struct {

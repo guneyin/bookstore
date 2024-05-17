@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/guneyin/bookstore/api/dto"
+	"github.com/guneyin/bookstore/api/handler/dto"
 	"github.com/guneyin/bookstore/api/middleware"
 	"github.com/guneyin/bookstore/config"
 	"github.com/guneyin/bookstore/service/general"
@@ -22,20 +22,19 @@ func NewGeneral(cfg *config.Config) IHandler {
 	return &GeneralHandler{svc}
 }
 
-func (gh *GeneralHandler) Name() string {
+func (h *GeneralHandler) Name() string {
 	return generalHandlerName
 }
 
-func (gh *GeneralHandler) SetRoutes(r fiber.Router) IHandler {
-	g := r.Group(gh.Name())
-	g.Get("status", gh.GeneralStatus)
+func (h *GeneralHandler) SetRoutes(r fiber.Router) IHandler {
+	g := r.Group(h.Name())
+	g.Get("status", h.GeneralStatus)
 
-	return gh
+	return h
 }
 
-func (gh *GeneralHandler) GeneralStatus(c *fiber.Ctx) error {
-	var status dto.StatusResponse
-	status.FromEntity(gh.svc.Status())
+func (h *GeneralHandler) GeneralStatus(c *fiber.Ctx) error {
+	status := dto.StatusFromEntity(h.svc.Status())
 
 	return middleware.OK(c, "service status fetched", status)
 }
