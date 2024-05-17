@@ -9,6 +9,7 @@ import (
 	"github.com/guneyin/bookstore/api/middleware"
 	"github.com/guneyin/bookstore/common"
 	"github.com/guneyin/bookstore/config"
+	"github.com/guneyin/bookstore/db"
 	"log"
 	"time"
 )
@@ -65,6 +66,11 @@ func (app *Application) Run() error {
 
 func main() {
 	app, err := NewApplication("The Online Book Store")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = db.Connect()
 	if err != nil {
 		log.Fatal(err)
 	}
