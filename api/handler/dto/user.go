@@ -1,21 +1,14 @@
 package dto
 
-import "github.com/guneyin/bookstore/service/user"
+import "github.com/guneyin/bookstore/repo/user"
 
 type UserResponse struct {
-	Id       int         `json:"id"`
-	Name     string      `json:"name"`
-	Username string      `json:"username"`
-	Email    string      `json:"email"`
-	Address  UserAddress `json:"address"`
-	Phone    string      `json:"phone"`
-}
-
-type UserAddress struct {
-	Street  string `json:"street"`
-	Suite   string `json:"suite"`
-	City    string `json:"city"`
-	Zipcode string `json:"zipcode"`
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Address  string `json:"address"`
+	Phone    string `json:"phone"`
 }
 
 type UserListResponse []UserResponse
@@ -26,13 +19,8 @@ func UserFromEntity(u user.User) *UserResponse {
 		Name:     u.Name,
 		Username: u.Username,
 		Email:    u.Name,
-		Address: UserAddress{
-			Street:  u.Address.Street,
-			Suite:   u.Address.Suite,
-			City:    u.Address.City,
-			Zipcode: u.Address.Zipcode,
-		},
-		Phone: u.Phone,
+		Address:  u.Address,
+		Phone:    u.Phone,
 	}
 }
 

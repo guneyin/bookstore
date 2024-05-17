@@ -18,7 +18,10 @@ build:
 	go build -o ${BINARY_NAME} -ldflags "-X ${LDFLAG_VERSION} -X ${LDFLAG_COMMIT_HASH} -X ${LDFLAG_BUILD_TIMESTAMP}"  cmd/app/main.go
 
 run:
-	go run cmd/app/main.go
+	go run main.go run
+
+gen-test:
+	go run . gen test
 
 clean:
 	go clean

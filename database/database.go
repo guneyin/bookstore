@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"log/slog"
@@ -26,13 +26,8 @@ func Connect() error {
 		return err
 	}
 
-	err = db.AutoMigrate()
-	if err != nil {
-		return err
-	}
-
 	slog.Info("[DATABASE]::CONNECTED")
-	DB = db
+	DB = db.Debug()
 
 	return nil
 }

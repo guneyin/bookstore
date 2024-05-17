@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -9,7 +9,9 @@ import (
 	"github.com/guneyin/bookstore/api/middleware"
 	"github.com/guneyin/bookstore/common"
 	"github.com/guneyin/bookstore/config"
-	"github.com/guneyin/bookstore/db"
+	"github.com/guneyin/bookstore/database"
+	"github.com/guneyin/bookstore/util"
+	"github.com/spf13/cobra"
 	"log"
 	"time"
 )
@@ -64,13 +66,25 @@ func (app *Application) Run() error {
 	return app.HttpServer.Listen(fmt.Sprintf(":%d", app.Config.Port))
 }
 
-func main() {
+var Cmd = &cobra.Command{
+	Use: "run",
+	Run: func(cmd *cobra.Command, args []string) {
+		runApp()
+	},
+}
+
+func runApp() {
 	app, err := NewApplication("The Online Book Store")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = db.Connect()
+	err = database.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = util.MigrateDB(database.DB)
 	if err != nil {
 		log.Fatal(err)
 	}
