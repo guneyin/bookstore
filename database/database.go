@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -14,6 +15,10 @@ import (
 const dbPath = "data/data.db"
 
 var DB *gorm.DB
+
+func GetDB(ctx context.Context) *gorm.DB {
+	return DB.WithContext(ctx)
+}
 
 func Connect() error {
 	checkDBPath()

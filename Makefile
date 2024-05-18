@@ -15,12 +15,12 @@ vet:
 	go vet ./...
 
 build:
-	go build -o ${BINARY_NAME} -ldflags "-X ${LDFLAG_VERSION} -X ${LDFLAG_COMMIT_HASH} -X ${LDFLAG_BUILD_TIMESTAMP}"  cmd/app/main.go
+	go build -o ${BINARY_NAME} -ldflags "-X ${LDFLAG_VERSION} -X ${LDFLAG_COMMIT_HASH} -X ${LDFLAG_BUILD_TIMESTAMP}" .
 
 run:
-	go run main.go run
+	go run . run
 
-gen-test:
+testdata:
 	go run . gen test
 
 clean:

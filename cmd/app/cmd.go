@@ -13,6 +13,8 @@ import (
 	"github.com/guneyin/bookstore/util"
 	"github.com/spf13/cobra"
 	"log"
+	"log/slog"
+	"os"
 	"time"
 )
 
@@ -35,6 +37,9 @@ func NewApplication(name string) (*Application, error) {
 		return nil, err
 	}
 
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
 	httpServer := fiber.New(fiber.Config{
 		ServerHeader:      fmt.Sprintf("%s HTTP Server", name),
 		AppName:           name,
@@ -56,7 +61,7 @@ func NewApplication(name string) (*Application, error) {
 		Version:    common.GetVersion().Version,
 		Config:     cfg,
 		HttpServer: httpServer,
-		Api:        api.New(cfg, apiGroup),
+		Api:        api.New(logger, apiGroup),
 	}, nil
 }
 

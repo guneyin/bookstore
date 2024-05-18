@@ -2,16 +2,13 @@ package general
 
 import (
 	"github.com/guneyin/bookstore/common"
-	"github.com/guneyin/bookstore/config"
 	"time"
 )
 
-type Service struct {
-	cfg *config.Config
-}
+type Service struct{}
 
-func New(cfg *config.Config) *Service {
-	return &Service{cfg: cfg}
+func New() *Service {
+	return &Service{}
 }
 
 func (s *Service) Status() Status {

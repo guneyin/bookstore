@@ -37,8 +37,6 @@ func Error(c *fiber.Ctx, err error) error {
 		statusMsg = statusNotfound
 	}
 
-	common.Log.ErrorContext(c.Context(), err.Error())
-
 	return c.Status(statusCode).JSON(response{
 		Status:  string(statusMsg),
 		Message: err.Error(),

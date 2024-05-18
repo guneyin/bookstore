@@ -4,26 +4,35 @@ import (
 	"context"
 	"github.com/guneyin/bookstore/common"
 	"github.com/guneyin/bookstore/database"
+	"github.com/guneyin/bookstore/entity"
+	"gorm.io/gorm"
 )
 
-func Create(ctx context.Context, u *User) error {
-	db := database.DB.WithContext(ctx)
+type Repo struct{}
 
-	r := &User{}
-	db.Model(u).First(r)
+func NewRepo() *Repo {
+	return &Repo{}
+}
 
-	if r.Id == u.Id {
+func (r Repo) Create(ctx context.Context, u *entity.User) error {
+	db := database.GetDB(ctx)
+
+	obj := &entity.User{}
+
+	db.Model(&entity.User{}).First(obj)
+
+	if obj.Email == u.Email {
 		return common.ErrAlreadyExist
 	}
 
 	return db.Save(u).Error
 }
 
-func GetList(ctx context.Context) (UserList, error) {
-	db := database.DB.WithContext(ctx)
+func (r Repo) GetList(ctx context.Context) (*entity.UserList, error) {
+	db := database.GetDB(ctx)
 
-	var ul UserList
-	err := db.Model(&User{}).Find(&ul).Error
+	var ul *entity.UserList
+	err := db.Model(&entity.User{}).Find(ul).Error
 	if err != nil {
 		return nil, err
 	}
@@ -31,13 +40,13 @@ func GetList(ctx context.Context) (UserList, error) {
 	return ul, nil
 }
 
-func GetById(ctx context.Context, id int) (*User, error) {
-	db := database.DB.WithContext(ctx)
+func (r Repo) GetById(ctx context.Context, id uint) (*entity.User, error) {
+	db := database.GetDB(ctx)
 
-	u := &User{Id: id}
+	u := &entity.User{Model: gorm.Model{ID: id}}
 	err := db.Model(u).First(u).Error
 	if err != nil {
-		return nil, common.ErrNotFound
+		return nil, err
 	}
 
 	return u, nil

@@ -2,18 +2,17 @@ package gen
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"github.com/guneyin/bookstore/common"
+	"github.com/guneyin/bookstore/entity"
 	"github.com/guneyin/bookstore/repo/user"
 	"gorm.io/gorm"
 	"log/slog"
-	"net/http"
 )
 
+const urlUsers = "https://freetestapi.com/api/v1/users"
+
 type UserDTO struct {
-	Id       int    `json:"id"`
 	Name     string `json:"name"`
 	Age      int    `json:"age"`
 	Username string `json:"username"`
@@ -26,44 +25,27 @@ type UserDTO struct {
 	Phone string `json:"phone"`
 }
 
-const urlUserList = "https://freetestapi.com/api/v1/users"
-
 func generateUserData(ctx context.Context, r *resty.Request, db *gorm.DB) error {
-	common.Log.InfoContext(ctx, "generating user data..")
-	var ul []UserDTO
+	log.InfoContext(ctx, "generating user data..")
 
-	res, err := r.
-		SetResult(&ul).
-		SetQueryParam("limit", "10").
-		Get(urlUserList)
+	ul, err := fetchData[UserDTO](ctx, r, db, urlUsers)
 	if err != nil {
-		common.Log.ErrorContext(ctx, "error on api call", slog.String("msg", err.Error()))
-
 		return err
 	}
 
-	if res.StatusCode() >= http.StatusBadRequest {
-		common.Log.ErrorContext(ctx, "api returned error",
-			slog.Int("status_code", res.StatusCode()),
-			slog.String("status", res.Status()),
-		)
+	truncateTable(db, &entity.User{})
 
-		return errors.New(res.Status())
-	}
-
-	truncateTable(db, &user.User{})
-
-	for _, entity := range ul {
-		err = user.Create(ctx, &user.User{
-			Id:       entity.Id,
-			Name:     entity.Name,
-			Username: entity.Username,
-			Email:    entity.Email,
-			Address:  fmt.Sprintf("%s %s %s", entity.Address.Street, entity.Address.City, entity.Address.Zip),
-			Phone:    entity.Phone,
+	repo := user.NewRepo()
+	for _, item := range ul {
+		err = repo.Create(ctx, &entity.User{
+			Name:     item.Name,
+			Username: item.Username,
+			Email:    item.Email,
+			Address:  fmt.Sprintf("%s %s %s", item.Address.Street, item.Address.City, item.Address.Zip),
+			Phone:    item.Phone,
 		})
 		if err != nil {
-			common.Log.WarnContext(ctx, fmt.Sprintf("%s could not created", entity.Username), slog.String("err", err.Error()))
+			log.WarnContext(ctx, fmt.Sprintf("%s could not created", item.Username), slog.String("err", err.Error()))
 		}
 	}
 

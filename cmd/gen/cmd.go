@@ -2,14 +2,20 @@ package gen
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/guneyin/bookstore/database"
 	"github.com/guneyin/bookstore/util"
 	"github.com/spf13/cobra"
 	"gorm.io/gorm"
+	"log/slog"
+	"net/http"
+	"os"
 	"time"
 )
+
+var log *slog.Logger
 
 var Cmd = &cobra.Command{
 	Use: "gen",
@@ -24,6 +30,8 @@ var testData = &cobra.Command{
 
 func init() {
 	Cmd.AddCommand(testData)
+
+	log = slog.New(slog.NewJSONHandler(os.Stdout, nil))
 }
 
 func testDataGenerator() {
@@ -47,6 +55,11 @@ func testDataGenerator() {
 	if err != nil {
 		panic(err)
 	}
+
+	err = generateBookData(ctx, r, db)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func truncateTable(db *gorm.DB, model any) {
@@ -54,5 +67,30 @@ func truncateTable(db *gorm.DB, model any) {
 	_ = stmt.Parse(model)
 	tableName := stmt.Schema.Table
 
-	db.Raw(fmt.Sprintf("TRUNCATE TABLE  %s;", tableName))
+	db.Exec(fmt.Sprintf("DELETE FROM %s;", tableName))
+}
+
+func fetchData[V any](ctx context.Context, r *resty.Request, db *gorm.DB, url string) ([]V, error) {
+	var list []V
+
+	res, err := r.
+		SetResult(&list).
+		SetQueryParam("limit", "10").
+		Get(url)
+	if err != nil {
+		log.ErrorContext(ctx, "error on api call", slog.String("msg", err.Error()))
+
+		return nil, err
+	}
+
+	if res.StatusCode() >= http.StatusBadRequest {
+		log.ErrorContext(ctx, "api returned error",
+			slog.Int("status_code", res.StatusCode()),
+			slog.String("status", res.Status()),
+		)
+
+		return nil, errors.New(res.Status())
+	}
+
+	return list, nil
 }

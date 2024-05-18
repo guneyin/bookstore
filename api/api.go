@@ -3,15 +3,15 @@ package api
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/guneyin/bookstore/api/handler"
-	"github.com/guneyin/bookstore/config"
+	"log/slog"
 )
 
 type Api struct {
 	handler *handler.Handler
 }
 
-func New(cfg *config.Config, router fiber.Router) *Api {
-	hnd := handler.New(cfg, router)
+func New(log *slog.Logger, router fiber.Router) *Api {
+	hnd := handler.New(log, router)
 
 	return &Api{handler: hnd}
 }

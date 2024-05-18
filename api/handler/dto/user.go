@@ -1,9 +1,11 @@
 package dto
 
-import "github.com/guneyin/bookstore/repo/user"
+import (
+	"github.com/guneyin/bookstore/entity"
+)
 
 type UserResponse struct {
-	Id       int    `json:"id"`
+	Id       uint   `json:"id"`
 	Name     string `json:"name"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
@@ -13,9 +15,9 @@ type UserResponse struct {
 
 type UserListResponse []UserResponse
 
-func UserFromEntity(u user.User) *UserResponse {
+func UserFromEntity(u entity.User) *UserResponse {
 	return &UserResponse{
-		Id:       u.Id,
+		Id:       u.ID,
 		Name:     u.Name,
 		Username: u.Username,
 		Email:    u.Name,
@@ -24,7 +26,7 @@ func UserFromEntity(u user.User) *UserResponse {
 	}
 }
 
-func UserListFromEntity(ul *user.UserList) *UserListResponse {
+func UserListFromEntity(ul *entity.UserList) *UserListResponse {
 	list := UserListResponse{}
 
 	for _, item := range *ul {

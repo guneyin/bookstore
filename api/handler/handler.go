@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/guneyin/bookstore/config"
+	"log/slog"
 )
 
 type IHandler interface {
@@ -11,14 +11,14 @@ type IHandler interface {
 }
 
 type Handler struct {
-	cfg      *config.Config
+	log      *slog.Logger
 	router   fiber.Router
 	handlers map[string]IHandler
 }
 
-func New(cfg *config.Config, router fiber.Router) *Handler {
+func New(log *slog.Logger, router fiber.Router) *Handler {
 	handler := &Handler{
-		cfg:      cfg,
+		log:      log,
 		router:   router,
 		handlers: make(map[string]IHandler),
 	}
@@ -27,12 +27,13 @@ func New(cfg *config.Config, router fiber.Router) *Handler {
 	return handler
 }
 
-func (h *Handler) registerHandlers() {
+func (h Handler) registerHandlers() {
 	h.registerHandler(NewGeneral)
 	h.registerHandler(NewUser)
+	h.registerHandler(NewBook)
 }
 
-func (h *Handler) registerHandler(f func(cfg *config.Config) IHandler) {
-	hnd := f(h.cfg).SetRoutes(h.router)
+func (h Handler) registerHandler(f func(log *slog.Logger) IHandler) {
+	hnd := f(h.log).SetRoutes(h.router)
 	h.handlers[hnd.Name()] = hnd
 }

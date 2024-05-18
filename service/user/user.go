@@ -2,51 +2,51 @@ package user
 
 import (
 	"context"
-	"github.com/go-resty/resty/v2"
-	"github.com/guneyin/bookstore/common"
-	"github.com/guneyin/bookstore/config"
+	"github.com/guneyin/bookstore/entity"
 	"github.com/guneyin/bookstore/repo/user"
 	"log/slog"
 )
 
-//
-
 type Service struct {
-	cfg   *config.Config
-	httpC *resty.Client
+	repo *user.Repo
+	log  *slog.Logger
 }
 
-func New(cfg *config.Config) *Service {
+func New(log *slog.Logger) *Service {
 	return &Service{
-		cfg:   cfg,
-		httpC: resty.New(),
+		repo: user.NewRepo(),
+		log:  log,
 	}
 }
 
-func (s Service) GetUserList(ctx context.Context) (*user.UserList, error) {
-	common.Log.InfoContext(ctx, "entered GetUserList")
+func (s Service) GetList(ctx context.Context) (*entity.UserList, error) {
+	s.log.InfoContext(ctx, "entered GetList")
 
-	ul, err := user.GetList(ctx)
+	ul, err := s.repo.GetList(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	common.Log.InfoContext(ctx, "user list fetched", slog.Int("count", len(ul)))
+	s.log.InfoContext(ctx, "user list fetched", slog.Int("count", len(*ul)))
 
-	return &ul, nil
+	return ul, nil
 }
 
-func (s Service) GetUserById(ctx context.Context, id int) (*user.User, error) {
-	common.Log.InfoContext(ctx, "entered GetUserById")
+func (s Service) GetById(ctx context.Context, id uint) (*entity.User, error) {
+	s.log.InfoContext(ctx, "entered GetById")
 
-	u, err := user.GetById(ctx, id)
+	u, err := s.repo.GetById(ctx, id)
 	if err != nil {
-		common.Log.ErrorContext(ctx, "error on GetUserById", slog.String("msg", err.Error()))
+		s.log.ErrorContext(ctx, "error on GetById", slog.String("msg", err.Error()))
 
 		return nil, err
 	}
 
-	common.Log.InfoContext(ctx, "user fetched")
+	s.log.InfoContext(ctx, "user fetched")
 
 	return u, nil
+}
+
+func (s Service) Search(ctx context.Context, sp *entity.BookSearchParams) (*entity.BookList, error) {
+	return nil, nil
 }
