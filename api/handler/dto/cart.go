@@ -15,8 +15,10 @@ type CartResponse struct {
 }
 
 type CartItem struct {
-	BookId uint `json:"bookId"`
-	Qty    uint `json:"qty"`
+	BookId     uint    `json:"bookId"`
+	Qty        uint    `json:"qty"`
+	Price      float64 `json:"price"`
+	TotalPrice float64 `json:"totalPrice"`
 }
 
 func CartFromEntity(ec []entity.CartResult) *CartResponse {
@@ -29,8 +31,10 @@ func CartFromEntity(ec []entity.CartResult) *CartResponse {
 	for _, item := range ec {
 		cart.TotalPrice += item.TotalPrice()
 		cart.Items = append(cart.Items, CartItem{
-			BookId: item.BookId,
-			Qty:    item.Qty,
+			BookId:     item.BookId,
+			Qty:        item.Qty,
+			Price:      item.Price,
+			TotalPrice: item.TotalPrice(),
 		})
 	}
 
