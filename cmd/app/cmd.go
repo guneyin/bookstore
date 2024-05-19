@@ -10,7 +10,6 @@ import (
 	"github.com/guneyin/bookstore/common"
 	"github.com/guneyin/bookstore/config"
 	"github.com/guneyin/bookstore/database"
-	"github.com/guneyin/bookstore/util"
 	"github.com/spf13/cobra"
 	"log"
 	"log/slog"
@@ -85,11 +84,6 @@ func runApp() {
 	}
 
 	err = database.Connect()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = util.MigrateDB(database.DB)
 	if err != nil {
 		log.Fatal(err)
 	}

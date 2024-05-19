@@ -14,6 +14,7 @@ type Book struct {
 	Genre           string `gorm:"index"`
 	Description     string
 	CoverImage      string
+	Price           float64
 }
 
 type BookList []Book

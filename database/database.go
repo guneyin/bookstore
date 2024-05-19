@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"github.com/guneyin/bookstore/entity"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -34,7 +35,11 @@ func Connect() error {
 	slog.Info("[DATABASE]::CONNECTED")
 	DB = db.Debug()
 
-	return nil
+	return db.AutoMigrate(
+		&entity.User{},
+		&entity.Book{},
+		&entity.Cart{},
+	)
 }
 
 func checkDBPath() {

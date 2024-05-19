@@ -5,7 +5,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/guneyin/bookstore/api/handler/dto"
 	"github.com/guneyin/bookstore/api/middleware"
-	"github.com/guneyin/bookstore/entity"
 	"github.com/guneyin/bookstore/service/book"
 	"log/slog"
 )
@@ -38,12 +37,12 @@ func (h BookHandler) SetRoutes(r fiber.Router) IHandler {
 }
 
 func (h BookHandler) GetBookList(c *fiber.Ctx) error {
-	list, err := h.svc.GetList(c.Context())
+	obj, err := h.svc.GetList(c.Context())
 	if err != nil {
 		return err
 	}
 
-	data := dto.BookListFromEntity(list)
+	data := dto.BookListFromEntity(obj)
 
 	return middleware.OK(c, fmt.Sprintf("%d books fetched", len(*data)), data)
 }
@@ -54,16 +53,18 @@ func (h BookHandler) GetBookById(c *fiber.Ctx) error {
 		return fmt.Errorf("invalid book is '%s'", c.Params("id"))
 	}
 
-	data, err := h.svc.GetById(c.Context(), uint(id))
+	obj, err := h.svc.GetById(c.Context(), uint(id))
 	if err != nil {
 		return err
 	}
+
+	data := dto.BookFromEntity(obj)
 
 	return middleware.OK(c, "book fetched", data)
 }
 
 func (h BookHandler) SearchBook(c *fiber.Ctx) error {
-	sp := new(entity.BookSearchParams)
+	sp := new(dto.BookSearchRequest)
 
 	err := c.BodyParser(sp)
 	if err != nil {

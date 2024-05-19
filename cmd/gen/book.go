@@ -8,6 +8,7 @@ import (
 	"github.com/guneyin/bookstore/repo/book"
 	"gorm.io/gorm"
 	"log/slog"
+	"math/rand"
 	"strings"
 )
 
@@ -41,6 +42,7 @@ func generateBookData(ctx context.Context, r *resty.Request, db *gorm.DB) error 
 			Genre:           strings.Join(item.Genre, " "),
 			Description:     item.Description,
 			CoverImage:      item.CoverImage,
+			Price:           (rand.Float64() * 50) + 50,
 		})
 		if err != nil {
 			log.WarnContext(ctx, fmt.Sprintf("%s could not created", item.Title), slog.String("err", err.Error()))

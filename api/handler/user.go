@@ -36,12 +36,12 @@ func (h UserHandler) SetRoutes(r fiber.Router) IHandler {
 }
 
 func (h UserHandler) GetUserList(c *fiber.Ctx) error {
-	list, err := h.svc.GetList(c.Context())
+	obj, err := h.svc.GetList(c.Context())
 	if err != nil {
 		return err
 	}
 
-	data := dto.UserListFromEntity(list)
+	data := dto.UserListFromEntity(obj)
 
 	return middleware.OK(c, fmt.Sprintf("%d users fetched", len(*data)), data)
 }
@@ -49,10 +49,12 @@ func (h UserHandler) GetUserList(c *fiber.Ctx) error {
 func (h UserHandler) GetUserById(c *fiber.Ctx) error {
 	id, _ := c.ParamsInt("id", 0)
 
-	data, err := h.svc.GetById(c.Context(), uint(id))
+	obj, err := h.svc.GetById(c.Context(), uint(id))
 	if err != nil {
 		return err
 	}
+
+	data := dto.UserFromEntity(obj)
 
 	return middleware.OK(c, "user fetched", data)
 }

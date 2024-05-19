@@ -15,7 +15,7 @@ type UserResponse struct {
 
 type UserListResponse []UserResponse
 
-func UserFromEntity(u entity.User) *UserResponse {
+func UserFromEntity(u *entity.User) *UserResponse {
 	return &UserResponse{
 		Id:       u.ID,
 		Name:     u.Name,
@@ -30,7 +30,7 @@ func UserListFromEntity(ul *entity.UserList) *UserListResponse {
 	list := UserListResponse{}
 
 	for _, item := range *ul {
-		u := UserFromEntity(item)
+		u := UserFromEntity(&item)
 		list = append(list, *u)
 	}
 

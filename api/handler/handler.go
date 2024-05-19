@@ -31,6 +31,7 @@ func (h Handler) registerHandlers() {
 	h.registerHandler(NewGeneral)
 	h.registerHandler(NewUser)
 	h.registerHandler(NewBook)
+	h.registerHandler(NewOrder)
 }
 
 func (h Handler) registerHandler(f func(log *slog.Logger) IHandler) {

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/guneyin/bookstore/database"
-	"github.com/guneyin/bookstore/util"
 	"github.com/spf13/cobra"
 	"gorm.io/gorm"
 	"log/slog"
@@ -44,12 +43,7 @@ func testDataGenerator() {
 	}
 
 	r := resty.New().R().SetContext(ctx)
-	db := database.DB.WithContext(ctx)
-
-	err = util.MigrateDB(db)
-	if err != nil {
-		panic(err)
-	}
+	db := database.GetDB(ctx)
 
 	err = generateUserData(ctx, r, db)
 	if err != nil {

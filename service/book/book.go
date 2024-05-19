@@ -2,6 +2,7 @@ package book
 
 import (
 	"context"
+	"github.com/guneyin/bookstore/api/handler/dto"
 	"github.com/guneyin/bookstore/entity"
 	"github.com/guneyin/bookstore/repo/book"
 	"log/slog"
@@ -24,6 +25,8 @@ func (s Service) GetList(ctx context.Context) (*entity.BookList, error) {
 
 	bl, err := s.repo.GetList(ctx)
 	if err != nil {
+		s.log.ErrorContext(ctx, "error on GetList", slog.String("msg", err.Error()))
+
 		return nil, err
 	}
 
@@ -47,8 +50,14 @@ func (s Service) GetById(ctx context.Context, id uint) (*entity.Book, error) {
 	return u, nil
 }
 
-func (s Service) Search(ctx context.Context, sp *entity.BookSearchParams) (*entity.BookList, error) {
+func (s Service) Search(ctx context.Context, req *dto.BookSearchRequest) (*entity.BookList, error) {
 	s.log.InfoContext(ctx, "entered Search")
+
+	sp := &entity.BookSearchParams{
+		Title:  entity.WildcardString(req.Title),
+		Author: entity.WildcardString(req.Author),
+		Genre:  entity.WildcardString(req.Genre),
+	}
 
 	u, err := s.repo.Search(ctx, sp)
 	if err != nil {
