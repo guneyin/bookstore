@@ -1,20 +1,20 @@
-package order
+package cart
 
 import (
 	"context"
 	"github.com/guneyin/bookstore/entity"
-	"github.com/guneyin/bookstore/repo/order"
+	"github.com/guneyin/bookstore/repo/cart"
 	"log/slog"
 )
 
 type Service struct {
-	repo *order.Repo
+	repo *cart.Repo
 	log  *slog.Logger
 }
 
 func New(log *slog.Logger) *Service {
 	return &Service{
-		repo: order.NewRepo(),
+		repo: cart.NewRepo(),
 		log:  log,
 	}
 }
