@@ -30,7 +30,9 @@ func (h CartHandler) Name() string {
 func (h CartHandler) SetRoutes(r fiber.Router) IHandler {
 	g := r.Group(h.Name())
 	g.Post("/", h.Add)
-	g.Get("/:user_id", h.GetByUserId)
+	g.Get("/:user_id", h.GetCartByUserId)
+	g.Get("/place-order/:user_id", h.PlaceOrder)
+	g.Get("/order/user/:user_id", h.GetOrdersByUserId)
 
 	return h
 }
@@ -53,7 +55,7 @@ func (h CartHandler) Add(c *fiber.Ctx) error {
 	return middleware.OK(c, "item added to cart", data)
 }
 
-func (h CartHandler) GetByUserId(c *fiber.Ctx) error {
+func (h CartHandler) GetCartByUserId(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("user_id")
 	if err != nil {
 		return common.ErrInvalidUserId
@@ -67,4 +69,36 @@ func (h CartHandler) GetByUserId(c *fiber.Ctx) error {
 	data := dto.CartFromEntity(sc)
 
 	return middleware.OK(c, "cart fetched", data)
+}
+
+func (h CartHandler) PlaceOrder(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("user_id")
+	if err != nil {
+		return common.ErrInvalidUserId
+	}
+
+	order, err := h.svc.PlaceOrder(c.Context(), uint(id))
+	if err != nil {
+		return err
+	}
+
+	data := dto.OrderFromEntity(order)
+
+	return middleware.OK(c, "order created", data)
+}
+
+func (h CartHandler) GetOrdersByUserId(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("user_id")
+	if err != nil {
+		return common.ErrInvalidUserId
+	}
+
+	orders, err := h.svc.GetOrdersByUserId(c.Context(), uint(id))
+	if err != nil {
+		return err
+	}
+
+	data := dto.UserOrdersFromEntity(uint(id), orders)
+
+	return middleware.OK(c, "user orders fetched", data)
 }

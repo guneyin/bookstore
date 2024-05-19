@@ -50,6 +50,8 @@ func Connect() error {
 		&entity.User{},
 		&entity.Book{},
 		&entity.Cart{},
+		&entity.Order{},
+		&entity.OrderItem{},
 	)
 }
 

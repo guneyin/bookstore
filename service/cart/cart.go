@@ -48,3 +48,33 @@ func (s Service) GetCart(ctx context.Context, id uint) ([]entity.CartResult, err
 
 	return sc, nil
 }
+
+func (s Service) PlaceOrder(ctx context.Context, id uint) (*entity.Order, error) {
+	s.log.InfoContext(ctx, "entered PlaceOrder")
+
+	order, err := s.repo.PlaceOrder(ctx, id)
+	if err != nil {
+		s.log.ErrorContext(ctx, "error on PlaceOrder", slog.String("msg", err.Error()))
+
+		return nil, err
+	}
+
+	s.log.InfoContext(ctx, "order created successfully")
+
+	return order, nil
+}
+
+func (s Service) GetOrdersByUserId(ctx context.Context, id uint) ([]entity.Order, error) {
+	s.log.InfoContext(ctx, "entered GetOrdersByUserId")
+
+	orders, err := s.repo.GetOrdersByUserId(ctx, id)
+	if err != nil {
+		s.log.ErrorContext(ctx, "error on GetOrdersByUserId", slog.String("msg", err.Error()))
+
+		return nil, err
+	}
+
+	s.log.InfoContext(ctx, "orders fetched successfully")
+
+	return orders, nil
+}
