@@ -5,7 +5,6 @@ import (
 	"github.com/guneyin/bookstore/common"
 	"github.com/guneyin/bookstore/database"
 	"github.com/guneyin/bookstore/entity"
-	"gorm.io/gorm"
 )
 
 type Repo struct{}
@@ -17,21 +16,20 @@ func NewRepo() *Repo {
 func (r Repo) Create(ctx context.Context, u *entity.Book) error {
 	db := database.GetDB(ctx)
 
-	b := &entity.Book{}
-	db.Model(u).First(r)
-
-	if b.Title == u.Title {
+	obj := &entity.Book{}
+	tx := db.First(obj, "title = ?", u.Title)
+	if tx.RowsAffected == 1 {
 		return common.ErrAlreadyExist
 	}
 
-	return db.Save(u).Error
+	return db.Create(u).Error
 }
 
 func (r Repo) GetList(ctx context.Context) (*entity.BookList, error) {
 	db := database.GetDB(ctx)
 
 	obj := &entity.BookList{}
-	err := db.Model(obj).Find(obj).Error
+	err := db.Find(obj).Error
 	if err != nil {
 		return nil, err
 	}
@@ -42,8 +40,8 @@ func (r Repo) GetList(ctx context.Context) (*entity.BookList, error) {
 func (r Repo) GetById(ctx context.Context, id uint) (*entity.Book, error) {
 	db := database.GetDB(ctx)
 
-	obj := &entity.Book{Model: gorm.Model{ID: id}}
-	err := db.Model(obj).First(obj).Error
+	obj := &entity.Book{}
+	err := db.First(obj, id).Error
 	if err != nil {
 		return nil, err
 	}

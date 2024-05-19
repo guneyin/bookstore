@@ -43,12 +43,12 @@ func (h CartHandler) Add(c *fiber.Ctx) error {
 		return err
 	}
 
-	sp, err := h.svc.AddToCart(c.Context(), req.UserId, req.BookId, req.Qty)
+	sc, err := h.svc.AddToCart(c.Context(), req.UserId, req.BookId, req.Qty)
 	if err != nil {
 		return err
 	}
 
-	data := dto.CartFromEntity(sp)
+	data := dto.CartFromEntity(sc)
 
 	return middleware.OK(c, "item added to cart", data)
 }
@@ -59,12 +59,12 @@ func (h CartHandler) GetByUserId(c *fiber.Ctx) error {
 		return common.ErrInvalidUserId
 	}
 
-	sp, err := h.svc.GetChart(c.Context(), uint(id))
+	sc, err := h.svc.GetCart(c.Context(), uint(id))
 	if err != nil {
 		return err
 	}
 
-	data := dto.CartFromEntity(sp)
+	data := dto.CartFromEntity(sc)
 
 	return middleware.OK(c, "cart fetched", data)
 }

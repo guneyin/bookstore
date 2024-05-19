@@ -17,8 +17,19 @@ const dbPath = "data/data.db"
 
 var DB *gorm.DB
 
-func GetDB(ctx context.Context) *gorm.DB {
-	return DB.WithContext(ctx)
+func GetDB(ctx context.Context, debug ...bool) *gorm.DB {
+	df := false
+	db := DB.WithContext(ctx)
+
+	if len(debug) > 0 {
+		df = debug[0]
+	}
+
+	if df {
+		return db.Debug()
+	}
+
+	return db
 }
 
 func Connect() error {
@@ -33,7 +44,7 @@ func Connect() error {
 	}
 
 	slog.Info("[DATABASE]::CONNECTED")
-	DB = db.Debug()
+	DB = db
 
 	return db.AutoMigrate(
 		&entity.User{},

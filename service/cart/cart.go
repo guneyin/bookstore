@@ -22,7 +22,7 @@ func New(log *slog.Logger) *Service {
 func (s Service) AddToCart(ctx context.Context, uId, bId, qty uint) ([]entity.CartResult, error) {
 	s.log.InfoContext(ctx, "entered AddToCart")
 
-	cart, err := s.repo.AddToCart(ctx, uId, bId, qty)
+	sc, err := s.repo.AddToCart(ctx, uId, bId, qty)
 	if err != nil {
 		s.log.ErrorContext(ctx, "error on AddToCart", slog.String("msg", err.Error()))
 
@@ -31,20 +31,20 @@ func (s Service) AddToCart(ctx context.Context, uId, bId, qty uint) ([]entity.Ca
 
 	s.log.InfoContext(ctx, "book added to cart successfully")
 
-	return cart, nil
+	return sc, nil
 }
 
-func (s Service) GetChart(ctx context.Context, id uint) ([]entity.CartResult, error) {
-	s.log.InfoContext(ctx, "entered GetChart")
+func (s Service) GetCart(ctx context.Context, id uint) ([]entity.CartResult, error) {
+	s.log.InfoContext(ctx, "entered GetCart")
 
-	cart, err := s.repo.GetCart(ctx, id)
+	sc, err := s.repo.GetCart(ctx, id)
 	if err != nil {
-		s.log.ErrorContext(ctx, "error on GetChart", slog.String("msg", err.Error()))
+		s.log.ErrorContext(ctx, "error on GetCart", slog.String("msg", err.Error()))
 
 		return nil, err
 	}
 
-	s.log.InfoContext(ctx, "chart fetched successfully")
+	s.log.InfoContext(ctx, "cart fetched successfully")
 
-	return cart, nil
+	return sc, nil
 }

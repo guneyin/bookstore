@@ -26,7 +26,7 @@ type BookDTO struct {
 func generateBookData(ctx context.Context, r *resty.Request, db *gorm.DB) error {
 	log.InfoContext(ctx, "generating book data..")
 
-	ul, err := fetchData[BookDTO](ctx, r, db, urlBooks)
+	ul, err := fetchData[BookDTO](ctx, r, urlBooks)
 	if err != nil {
 		return err
 	}

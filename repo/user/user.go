@@ -5,7 +5,6 @@ import (
 	"github.com/guneyin/bookstore/common"
 	"github.com/guneyin/bookstore/database"
 	"github.com/guneyin/bookstore/entity"
-	"gorm.io/gorm"
 )
 
 type Repo struct{}
@@ -18,9 +17,9 @@ func (r Repo) Create(ctx context.Context, u *entity.User) error {
 	db := database.GetDB(ctx)
 
 	obj := &entity.User{}
-	db.Model(obj).First(obj)
+	tx := db.First(obj, "email = ?", u.Email)
 
-	if obj.Email == u.Email {
+	if tx.RowsAffected == 1 {
 		return common.ErrAlreadyExist
 	}
 
@@ -42,8 +41,8 @@ func (r Repo) GetList(ctx context.Context) (*entity.UserList, error) {
 func (r Repo) GetById(ctx context.Context, id uint) (*entity.User, error) {
 	db := database.GetDB(ctx)
 
-	obj := &entity.User{Model: gorm.Model{ID: id}}
-	err := db.Model(obj).First(obj).Error
+	obj := &entity.User{}
+	err := db.First(obj, id).Error
 	if err != nil {
 		return nil, err
 	}

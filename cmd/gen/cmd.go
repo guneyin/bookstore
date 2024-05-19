@@ -43,7 +43,7 @@ func testDataGenerator() {
 	}
 
 	r := resty.New().R().SetContext(ctx)
-	db := database.GetDB(ctx)
+	db := database.GetDB(ctx, false)
 
 	err = generateUserData(ctx, r, db)
 	if err != nil {
@@ -64,7 +64,7 @@ func truncateTable(db *gorm.DB, model any) {
 	db.Exec(fmt.Sprintf("DELETE FROM %s;", tableName))
 }
 
-func fetchData[V any](ctx context.Context, r *resty.Request, db *gorm.DB, url string) ([]V, error) {
+func fetchData[V any](ctx context.Context, r *resty.Request, url string) ([]V, error) {
 	var list []V
 
 	res, err := r.

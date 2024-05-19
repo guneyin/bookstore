@@ -28,7 +28,7 @@ type UserDTO struct {
 func generateUserData(ctx context.Context, r *resty.Request, db *gorm.DB) error {
 	log.InfoContext(ctx, "generating user data..")
 
-	ul, err := fetchData[UserDTO](ctx, r, db, urlUsers)
+	ul, err := fetchData[UserDTO](ctx, r, urlUsers)
 	if err != nil {
 		return err
 	}

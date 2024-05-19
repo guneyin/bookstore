@@ -21,15 +21,14 @@ func (r Repo) AddToCart(ctx context.Context, uId, bId, qty uint) ([]entity.CartR
 		return nil, err
 	}
 
-	obj := &entity.Cart{
-		UserId: uId,
-		BookId: bId,
-	}
-	tx := db.Model(obj).First(obj)
+	obj := &entity.Cart{}
+	tx := db.First(obj, "user_id = ? and book_id = ?", uId, bId)
 
 	if tx.RowsAffected > 0 {
 		obj.Qty += qty
 	} else {
+		obj.BookId = bId
+		obj.UserId = uId
 		obj.Qty = qty
 	}
 

@@ -24,7 +24,7 @@ func CartFromEntity(ec []entity.CartResult) *CartResponse {
 		return nil
 	}
 
-	cart := &CartResponse{UserId: ec[0].ID}
+	cart := &CartResponse{UserId: ec[0].Cart.UserId}
 
 	for _, item := range ec {
 		cart.TotalPrice += item.TotalPrice()
