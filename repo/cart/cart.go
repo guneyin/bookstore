@@ -103,6 +103,8 @@ func (r Repo) PlaceOrder(ctx context.Context, uId uint) (*entity.Order, error) {
 		return nil, err
 	}
 
+	db.Delete(&entity.Cart{}, "user_id", uId)
+
 	db.Commit()
 
 	return r.GetOrder(ctx, order.ID)

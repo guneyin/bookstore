@@ -32,6 +32,7 @@ func (h CartHandler) SetRoutes(r fiber.Router) IHandler {
 	g.Post("/", h.Add)
 	g.Get("/:user_id", h.GetCartByUserId)
 	g.Get("/place-order/:user_id", h.PlaceOrder)
+	g.Get("/order/:order_id", h.GetOrderById)
 	g.Get("/order/user/:user_id", h.GetOrdersByUserId)
 
 	return h
@@ -85,6 +86,22 @@ func (h CartHandler) PlaceOrder(c *fiber.Ctx) error {
 	data := dto.OrderFromEntity(order)
 
 	return middleware.OK(c, "order created", data)
+}
+
+func (h CartHandler) GetOrderById(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("order_id")
+	if err != nil {
+		return common.ErrInvalidUserId
+	}
+
+	order, err := h.svc.GetOrderById(c.Context(), uint(id))
+	if err != nil {
+		return err
+	}
+
+	data := dto.OrderFromEntity(order)
+
+	return middleware.OK(c, "order fetched", data)
 }
 
 func (h CartHandler) GetOrdersByUserId(c *fiber.Ctx) error {

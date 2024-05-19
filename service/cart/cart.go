@@ -64,6 +64,21 @@ func (s Service) PlaceOrder(ctx context.Context, id uint) (*entity.Order, error)
 	return order, nil
 }
 
+func (s Service) GetOrderById(ctx context.Context, id uint) (*entity.Order, error) {
+	s.log.InfoContext(ctx, "entered GetOrderById")
+
+	order, err := s.repo.GetOrder(ctx, id)
+	if err != nil {
+		s.log.ErrorContext(ctx, "error on GetOrderById", slog.String("msg", err.Error()))
+
+		return nil, err
+	}
+
+	s.log.InfoContext(ctx, "order fetched successfully")
+
+	return order, nil
+}
+
 func (s Service) GetOrdersByUserId(ctx context.Context, id uint) ([]entity.Order, error) {
 	s.log.InfoContext(ctx, "entered GetOrdersByUserId")
 
