@@ -50,12 +50,15 @@ func (ms mailService) run() bool {
 		case <-ms.queue.ctx.Done():
 			return true
 		case j := <-ms.queue.jobs:
+			ms.log.Info("mail job received")
+
 			err := j.run()
 			if err != nil {
 				ms.log.Error("error on mail job", slog.String("msg", err.Error()))
 
 				continue
 			}
+			ms.log.Info("mail job completed")
 		}
 	}
 }
@@ -65,43 +68,38 @@ func (ms mailService) sendMail(c *Composer) {
 }
 
 func (ms mailService) mailJob(c *Composer) error {
+	msg := mail.NewMsg()
+	if err := msg.From(ms.cfg.SenderEmail); err != nil {
+		return err
+	}
+	if err := msg.To(c.to); err != nil {
+		return err
+	}
+	msg.Subject(c.subject)
+
 	html, err := ht.New("htmltpl").Parse(c.template)
 	if err != nil {
 		return err
 	}
-
-	msg := mail.NewMsg()
-
-	if err = msg.From(ms.cfg.SenderEmail); err != nil {
-		return err
-	}
-
-	if err = msg.To(c.to); err != nil {
-		return err
-	}
-
-	msg.SetMessageID()
-	msg.SetDate()
-	msg.Subject(c.subject)
-
 	err = msg.SetBodyHTMLTemplate(html, c.data)
 	if err != nil {
 		return err
 	}
 
-	client, err := mail.NewClient(ms.cfg.SmtpServer,
+	cl, err := mail.NewClient(
+		ms.cfg.SmtpServer,
+		mail.WithPort(ms.cfg.SmtpPort),
 		mail.WithSMTPAuth(mail.SMTPAuthPlain),
-		mail.WithTLSPortPolicy(mail.DefaultTLSPolicy),
+		mail.WithTLSPortPolicy(mail.TLSMandatory),
 		mail.WithUsername(ms.cfg.SmtpUserName),
 		mail.WithPassword(ms.cfg.SmtpPassword),
-		mail.WithPort(ms.cfg.SmtpPort),
 	)
 	if err != nil {
 		return err
 	}
-	defer client.Close()
+	defer cl.Close()
 
-	return client.DialAndSend(msg)
+	return cl.DialAndSend(msg)
 }
 
 func NewComposer(ctx context.Context) *Composer {
