@@ -38,6 +38,17 @@ func (h CartHandler) SetRoutes(r fiber.Router) IHandler {
 	return h
 }
 
+// Add
+// @Summary Add to cart.
+// @Description Add book to user cart.
+// @Tags cart
+// @Accept json
+// @Produce json
+// @Param search body dto.AddToCartRequest true "Add to cart"
+// @Success 200 {object} middleware.ResponseHTTP{data=dto.CartResponse}
+// @Failure 404 {object} middleware.ResponseHTTP{}
+// @Failure 500 {object} middleware.ResponseHTTP{}
+// @Router /cart [post]
 func (h CartHandler) Add(c *fiber.Ctx) error {
 	req := new(dto.AddToCartRequest)
 
@@ -56,6 +67,17 @@ func (h CartHandler) Add(c *fiber.Ctx) error {
 	return middleware.OK(c, "item added to cart", data)
 }
 
+// GetCartByUserId
+// @Summary Get user cart.
+// @Description Get user cart.
+// @Tags cart
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {object} middleware.ResponseHTTP{data=dto.CartResponse}
+// @Failure 404 {object} middleware.ResponseHTTP{}
+// @Failure 500 {object} middleware.ResponseHTTP{}
+// @Router /cart/{id} [get]
 func (h CartHandler) GetCartByUserId(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("user_id")
 	if err != nil {
@@ -72,6 +94,17 @@ func (h CartHandler) GetCartByUserId(c *fiber.Ctx) error {
 	return middleware.OK(c, "cart fetched", data)
 }
 
+// PlaceOrder
+// @Summary Place order.
+// @Description Order all items in the user cart.
+// @Tags cart
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {object} middleware.ResponseHTTP{data=dto.PlaceOrderResponse}
+// @Failure 404 {object} middleware.ResponseHTTP{}
+// @Failure 500 {object} middleware.ResponseHTTP{}
+// @Router /cart/place-order/{id} [get]
 func (h CartHandler) PlaceOrder(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("user_id")
 	if err != nil {
@@ -88,6 +121,17 @@ func (h CartHandler) PlaceOrder(c *fiber.Ctx) error {
 	return middleware.OK(c, "order created", data)
 }
 
+// GetOrderById
+// @Summary Get order.
+// @Description Get order by id.
+// @Tags cart
+// @Accept json
+// @Produce json
+// @Param id path int true "Order ID"
+// @Success 200 {object} middleware.ResponseHTTP{data=dto.PlaceOrderResponse}
+// @Failure 404 {object} middleware.ResponseHTTP{}
+// @Failure 500 {object} middleware.ResponseHTTP{}
+// @Router /cart/order/{id} [get]
 func (h CartHandler) GetOrderById(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("order_id")
 	if err != nil {
@@ -104,6 +148,17 @@ func (h CartHandler) GetOrderById(c *fiber.Ctx) error {
 	return middleware.OK(c, "order fetched", data)
 }
 
+// GetOrdersByUserId
+// @Summary Get user orders.
+// @Description Get orders by user id.
+// @Tags cart
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {object} middleware.ResponseHTTP{data=dto.UserOrdersResponse}
+// @Failure 404 {object} middleware.ResponseHTTP{}
+// @Failure 500 {object} middleware.ResponseHTTP{}
+// @Router /cart/order/user/{id} [get]
 func (h CartHandler) GetOrdersByUserId(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("user_id")
 	if err != nil {

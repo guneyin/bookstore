@@ -36,6 +36,16 @@ func (h BookHandler) SetRoutes(r fiber.Router) IHandler {
 	return h
 }
 
+// GetBookList
+// @Summary Get book list.
+// @Description List all the books.
+// @Tags book
+// @Accept json
+// @Produce json
+// @Success 200 {object} middleware.ResponseHTTP{data=dto.BookListResponse}
+// @Failure 404 {object} middleware.ResponseHTTP{}
+// @Failure 500 {object} middleware.ResponseHTTP{}
+// @Router /book/list [get]
 func (h BookHandler) GetBookList(c *fiber.Ctx) error {
 	obj, err := h.svc.GetList(c.Context())
 	if err != nil {
@@ -47,6 +57,17 @@ func (h BookHandler) GetBookList(c *fiber.Ctx) error {
 	return middleware.OK(c, fmt.Sprintf("%d books fetched", len(*data)), data)
 }
 
+// GetBookById
+// @Summary Get book.
+// @Description Get book by id.
+// @Tags book
+// @Accept json
+// @Produce json
+// @Param id path int true "Book ID"
+// @Success 200 {object} middleware.ResponseHTTP{data=dto.BookResponse}
+// @Failure 404 {object} middleware.ResponseHTTP{}
+// @Failure 500 {object} middleware.ResponseHTTP{}
+// @Router /book/{id} [get]
 func (h BookHandler) GetBookById(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
@@ -63,6 +84,17 @@ func (h BookHandler) GetBookById(c *fiber.Ctx) error {
 	return middleware.OK(c, "book fetched", data)
 }
 
+// SearchBook
+// @Summary Search book.
+// @Description Search book by given parameters.
+// @Tags book
+// @Accept json
+// @Produce json
+// @Param search body dto.BookSearchRequest true "Search book"
+// @Success 200 {object} middleware.ResponseHTTP{data=dto.BookListResponse}
+// @Failure 404 {object} middleware.ResponseHTTP{}
+// @Failure 500 {object} middleware.ResponseHTTP{}
+// @Router /book/search [post]
 func (h BookHandler) SearchBook(c *fiber.Ctx) error {
 	sp := new(dto.BookSearchRequest)
 

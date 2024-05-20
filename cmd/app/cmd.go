@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/favicon"
@@ -55,6 +56,12 @@ func NewApplication(name string) (*Application, error) {
 	httpServer.Use(cors.New())
 	httpServer.Use(recover.New())
 	httpServer.Use(favicon.New())
+	httpServer.Use(swagger.New(swagger.Config{
+		BasePath: "/api/",
+		FilePath: "./docs/swagger.json",
+		Path:     "docs",
+		Title:    "Swagger API Docs",
+	}))
 
 	apiGroup := httpServer.Group("/api")
 

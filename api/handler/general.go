@@ -33,6 +33,16 @@ func (h GeneralHandler) SetRoutes(r fiber.Router) IHandler {
 	return h
 }
 
+// Status
+// @Summary Show the status of server.
+// @Description Get the status of server.
+// @Tags status
+// @Accept json
+// @Produce json
+// @Success 200 {object} middleware.ResponseHTTP{data=general.Status}
+// @Failure 404 {object} middleware.ResponseHTTP{}
+// @Failure 500 {object} middleware.ResponseHTTP{}
+// @Router /general/status [get]
 func (h GeneralHandler) GeneralStatus(c *fiber.Ctx) error {
 	status := dto.StatusFromEntity(h.svc.Status())
 

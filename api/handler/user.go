@@ -35,6 +35,16 @@ func (h UserHandler) SetRoutes(r fiber.Router) IHandler {
 	return h
 }
 
+// GetUserList
+// @Summary List users.
+// @Description List all the users.
+// @Tags user
+// @Accept json
+// @Produce json
+// @Success 200 {object} middleware.ResponseHTTP{data=dto.UserListResponse}
+// @Failure 404 {object} middleware.ResponseHTTP{}
+// @Failure 500 {object} middleware.ResponseHTTP{}
+// @Router /user/list [get]
 func (h UserHandler) GetUserList(c *fiber.Ctx) error {
 	obj, err := h.svc.GetList(c.Context())
 	if err != nil {
@@ -46,6 +56,17 @@ func (h UserHandler) GetUserList(c *fiber.Ctx) error {
 	return middleware.OK(c, fmt.Sprintf("%d users fetched", len(*data)), data)
 }
 
+// GetUserById
+// @Summary Get user.
+// @Description Get user by id.
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {object} middleware.ResponseHTTP{data=dto.UserResponse}
+// @Failure 404 {object} middleware.ResponseHTTP{}
+// @Failure 500 {object} middleware.ResponseHTTP{}
+// @Router /user/{id} [get]
 func (h UserHandler) GetUserById(c *fiber.Ctx) error {
 	id, _ := c.ParamsInt("id", 0)
 

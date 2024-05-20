@@ -14,14 +14,14 @@ const (
 	statusNotfound status = "NOT_FOUND"
 )
 
-type response struct {
+type ResponseHTTP struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
 	Data    any    `json:"data"`
 }
 
 func OK(c *fiber.Ctx, msg string, data any) error {
-	return c.Status(fiber.StatusOK).JSON(response{
+	return c.Status(fiber.StatusOK).JSON(ResponseHTTP{
 		Status:  string(statusSuccess),
 		Message: msg,
 		Data:    data,
@@ -37,7 +37,7 @@ func Error(c *fiber.Ctx, err error) error {
 		statusMsg = statusNotfound
 	}
 
-	return c.Status(statusCode).JSON(response{
+	return c.Status(statusCode).JSON(ResponseHTTP{
 		Status:  string(statusMsg),
 		Message: err.Error(),
 		Data:    nil,

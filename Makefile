@@ -20,6 +20,9 @@ build:
 run:
 	go run . run
 
+doc:
+	swag init
+
 testdata:
 	go run . gen test
 
