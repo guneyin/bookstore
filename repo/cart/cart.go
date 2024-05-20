@@ -46,8 +46,7 @@ func (r Repo) GetCart(ctx context.Context, uId uint) ([]entity.CartResult, error
 
 	var cr []entity.CartResult
 
-	obj := &entity.Cart{UserId: uId}
-	err := db.Model(obj).Select("carts.*, books.price").Joins("inner join books on books.id = carts.book_id").Find(&cr).Error
+	err := db.Model(&entity.Cart{}).Where("user_id", uId).Select("carts.*, books.price").Joins("inner join books on books.id = carts.book_id").Find(&cr).Error
 	if err != nil {
 		return nil, err
 	}
@@ -162,12 +161,40 @@ func getBook(ctx context.Context, id uint) (*entity.Book, error) {
 func getUser(ctx context.Context, id uint) (*entity.User, error) {
 	db := database.GetDB(ctx)
 
-	obj := &entity.User{Model: gorm.Model{ID: id}}
+	obj := &entity.User{}
 
-	err := db.Find(obj).Error
+	err := db.Find(obj, id).Error
 	if err != nil {
 		return nil, err
 	}
 
 	return obj, nil
+}
+
+func GetOrderResult(ctx context.Context, orderId uint) ([]entity.OrderResult, error) {
+	db := database.GetDB(ctx)
+
+	var or []entity.OrderResult
+
+	q := `select 
+			   u.name as user_name,
+			   u.email as user_email,
+			   o.id as order_id,
+			   o.price as order_price,
+			   b.title as item_name,
+			   oi.price as item_price,
+			   oi.qty as item_qty,
+			   oi.total_price as item_total_price
+		  from orders o
+		 inner join users u on u.id = o.user_id
+		 inner join order_items oi on oi.order_id = o.id
+		 inner join books b on b.id = oi.book_id
+		 where o.id = ?`
+
+	err := db.Raw(q, orderId).Scan(&or).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return or, nil
 }

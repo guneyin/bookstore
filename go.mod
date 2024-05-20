@@ -7,6 +7,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.52.4
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/spf13/cobra v1.8.0
+	github.com/wneessen/go-mail v0.4.1
 	gorm.io/driver/sqlite v1.5.5
 	gorm.io/gorm v1.25.10
 )
@@ -20,7 +21,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/klauspost/compress v1.17.0 // indirect
-	github.com/kr/pretty v0.3.0 // indirect
+	github.com/kr/pretty v0.3.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect

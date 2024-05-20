@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/guneyin/bookstore/api"
@@ -10,6 +11,7 @@ import (
 	"github.com/guneyin/bookstore/common"
 	"github.com/guneyin/bookstore/config"
 	"github.com/guneyin/bookstore/database"
+	"github.com/guneyin/bookstore/mail"
 	"github.com/spf13/cobra"
 	"log"
 	"log/slog"
@@ -50,6 +52,7 @@ func NewApplication(name string) (*Application, error) {
 		},
 	})
 
+	httpServer.Use(cors.New())
 	httpServer.Use(recover.New())
 	httpServer.Use(favicon.New())
 
@@ -84,6 +87,11 @@ func runApp() {
 	}
 
 	err = database.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = mail.InitMailService(app.Config)
 	if err != nil {
 		log.Fatal(err)
 	}

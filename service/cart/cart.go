@@ -3,6 +3,7 @@ package cart
 import (
 	"context"
 	"github.com/guneyin/bookstore/entity"
+	"github.com/guneyin/bookstore/mail"
 	"github.com/guneyin/bookstore/repo/cart"
 	"log/slog"
 )
@@ -61,6 +62,8 @@ func (s Service) PlaceOrder(ctx context.Context, id uint) (*entity.Order, error)
 
 	s.log.InfoContext(ctx, "order created successfully")
 
+	s.sendOrderConfirmMail(ctx, order.ID)
+
 	return order, nil
 }
 
@@ -92,4 +95,28 @@ func (s Service) GetOrdersByUserId(ctx context.Context, id uint) ([]entity.Order
 	s.log.InfoContext(ctx, "orders fetched successfully")
 
 	return orders, nil
+}
+
+func (s Service) sendOrderConfirmMail(ctx context.Context, orderId uint) {
+	or, err := cart.GetOrderResult(ctx, orderId)
+	if err != nil {
+		s.log.ErrorContext(ctx, "error on sendOrderConfirmMail", slog.String("msg", err.Error()))
+
+		return
+	}
+
+	if len(or) == 0 {
+		s.log.WarnContext(ctx, "order not found")
+	}
+
+	order := or[0]
+	mail.NewComposer(ctx).
+		Name(order.UserName).
+		To(order.UserEmail).
+		Subject("Siparişiniz başarıyla alınmıştır").
+		Template(mail.OrderConfirmationTemplate).
+		Data(or).
+		Send()
+
+	s.log.InfoContext(ctx, "mail sent")
 }

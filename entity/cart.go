@@ -8,8 +8,8 @@ import (
 
 type Cart struct {
 	gorm.Model
-	UserId uint `gorm:"uniqueIndex:idx_cart"`
-	BookId uint `gorm:"uniqueIndex:idx_cart"`
+	UserId uint
+	BookId uint
 	Qty    uint
 }
 
@@ -34,6 +34,17 @@ type OrderItem struct {
 	Qty        uint
 	Price      float64
 	TotalPrice float64
+}
+
+type OrderResult struct {
+	UserName       string
+	UserEmail      string
+	OrderId        uint
+	OrderPrice     float64
+	ItemName       string
+	ItemPrice      float64
+	ItemQty        uint
+	ItemTotalPrice float64
 }
 
 func (cr CartResult) TotalPrice() float64 {

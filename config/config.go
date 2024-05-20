@@ -9,7 +9,13 @@ const (
 )
 
 type Config struct {
-	Port int `env:"PORT"`
+	Port           int    `env:"PORT"`
+	SmtpPort       int    `env:"SMTP_PORT"`
+	SmtpPassword   string `env:"SMTP_PWD"`
+	SmtpUserName   string `env:"SMTP_USER"`
+	SmtpServer     string `env:"SMTP_SERVER"`
+	SenderEmail    string `env:"SMTP_SENDER"`
+	SenderIdentity string `env:"SMTP_IDENTITY"`
 }
 
 func NewConfig() (*Config, error) {

@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"gorm.io/driver/sqlite"
@@ -15,7 +16,10 @@ import (
 
 const dbPath = "data/data.db"
 
-var DB *gorm.DB
+var (
+	dbOnce sync.Once
+	DB     *gorm.DB
+)
 
 func GetDB(ctx context.Context, debug ...bool) *gorm.DB {
 	df := false
@@ -33,20 +37,26 @@ func GetDB(ctx context.Context, debug ...bool) *gorm.DB {
 }
 
 func Connect() error {
-	checkDBPath()
+	var errDB error
 
-	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
-		NowFunc: func() time.Time { return time.Now().Local() },
-		Logger:  logger.Default.LogMode(logger.Info),
+	dbOnce.Do(func() {
+		checkDBPath()
+
+		db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
+			NowFunc: func() time.Time { return time.Now().Local() },
+			Logger:  logger.Default.LogMode(logger.Info),
+		})
+		errDB = err
+
+		DB = db
+
+		slog.Info("[DATABASE]::CONNECTED")
 	})
-	if err != nil {
-		return err
+	if errDB != nil {
+		return errDB
 	}
 
-	slog.Info("[DATABASE]::CONNECTED")
-	DB = db
-
-	return db.AutoMigrate(
+	return DB.AutoMigrate(
 		&entity.User{},
 		&entity.Book{},
 		&entity.Cart{},
