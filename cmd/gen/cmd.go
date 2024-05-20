@@ -21,9 +21,9 @@ var Cmd = &cobra.Command{
 }
 
 var testData = &cobra.Command{
-	Use: "test",
+	Use: "mock",
 	Run: func(cmd *cobra.Command, args []string) {
-		testDataGenerator()
+		mockDataGenerator()
 	},
 }
 
@@ -33,7 +33,7 @@ func init() {
 	log = slog.New(slog.NewJSONHandler(os.Stdout, nil))
 }
 
-func testDataGenerator() {
+func mockDataGenerator() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 

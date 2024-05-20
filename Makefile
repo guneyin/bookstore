@@ -11,21 +11,28 @@ LDFLAG_VERSION='${PACKAGE}/common.Version=${VERSION}'
 LDFLAG_COMMIT_HASH='${PACKAGE}/common.CommitHash=${COMMIT_HASH}'
 LDFLAG_BUILD_TIMESTAMP='${PACKAGE}/common.BuildTime=${BUILD_TIMESTAMP}'
 
+first: tidy vet mock doc run
+
+tidy:
+	go mod tidy
+
 vet:
 	go vet ./...
 
-build:
-	go build -o ${BINARY_NAME} -ldflags "-X ${LDFLAG_VERSION} -X ${LDFLAG_COMMIT_HASH} -X ${LDFLAG_BUILD_TIMESTAMP}" .
-
-run:
-	go run . run
+mock:
+	go run . gen mock
 
 doc:
 	swag init
 
-testdata:
-	go run . gen test
+run:
+	go run . run
+
+build:
+	go build -o ${BINARY_NAME} -ldflags "-X ${LDFLAG_VERSION} -X ${LDFLAG_COMMIT_HASH} -X ${LDFLAG_BUILD_TIMESTAMP}" .
 
 clean:
 	go clean
 	rm ${BINARY_NAME}
+
+
