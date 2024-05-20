@@ -20,7 +20,7 @@ func UserFromEntity(u *entity.User) *UserResponse {
 		Id:       u.ID,
 		Name:     u.Name,
 		Username: u.Username,
-		Email:    u.Name,
+		Email:    u.Email,
 		Address:  u.Address,
 		Phone:    u.Phone,
 	}
